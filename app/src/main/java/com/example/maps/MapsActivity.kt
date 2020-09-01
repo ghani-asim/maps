@@ -1,9 +1,8 @@
 package com.example.maps
 
 import android.Manifest
-import android.app.Activity
-import android.content.Context
 import android.content.pm.PackageManager
+import android.location.Geocoder
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
@@ -59,13 +58,19 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                     val location = locationResult.lastLocation
                     if (location != null) {
                         val latLng = LatLng(location.latitude, location.longitude)
-                        val markerOptions = MarkerOptions().position(latLng)
+                        val markerOptions = MarkerOptions().position(latLng).title(getAddress(location.latitude, location.longitude))
                         map.addMarker(markerOptions)
                         map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15f))
                     }
                 }
             }
         }
+    }
+
+    private fun getAddress(lat: Double?, lng: Double?): String {
+        val geoCoder = Geocoder(this)
+        val list = geoCoder.getFromLocation(lat?:0.0, lng?:0.0, 1)
+        return list[0].getAddressLine(0)
     }
 
     private fun startLocationUpdates() {
